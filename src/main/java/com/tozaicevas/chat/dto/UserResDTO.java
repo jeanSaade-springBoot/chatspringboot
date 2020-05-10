@@ -1,4 +1,4 @@
-package com.tozaicevas.chat.model;
+package com.tozaicevas.chat.dto;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -8,29 +8,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Data
-@Entity
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class User {
-    @Id
-    @SerializedName(value = "_id", alternate = "id")
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    @Expose
+public class UserResDTO {
+	@Expose
     private Long id;
-
-    @Expose
+	@Expose
     private String name;
-
-    @Expose
+	@Expose
     private String avatar;
-    
-    @Expose
+	@Expose
     private String token;
+	@Expose
+    private String status;
 }
 
