@@ -88,7 +88,7 @@ public class WebSocketHandler {
             }
             case WebSocketRequestType.GET_CHAT: {
                 // find subscribed chat, query db and return all messages
-                int chatRoomId = request.getChatRoomId();
+              int chatRoomId = request.getChatRoomId();
                 ChatRoom emptyChatRoom = ChatRoom.builder()
                         .messages(Collections.emptySet())
                         .build();
@@ -98,12 +98,13 @@ public class WebSocketHandler {
                         .messages(chatMessages)
                         .build();
                 TextMessage json = new TextMessage(gson.toJson(response));
-                session.sendMessage(json);
-                log.info(String.format("Chat (id: %d) sent to user (id: %s)", chatRoomId, sessionToUser.get(session)));
+                session.sendMessage(json); 
+            	
+               // log.info(String.format("Chat (id: %d) sent to user (id: %s)", chatRoomId, sessionToUser.get(session)));
                 break;
             }
             case WebSocketRequestType.POST_NEW_MESSAGE: {
-                // insert message into db and return the message
+          
                 Message chatMessage = request.getMessage();
                 chatRoomRepository.findById(request.getChatRoomId())
                         .ifPresent(UtilException.rethrowConsumer((chatRoom) -> {
@@ -121,30 +122,8 @@ public class WebSocketHandler {
                                             .responseType(WebSocketResponseType.UPDATE_CHAT)
                                             .message(dbMessage)
                                             .build();
-                                    TextMessage newMessageJson = new TextMessage(gson.toJson(response));
-                                    Map<String, Integer> subscribedSessions = userToChatRoom.entrySet().stream()
-                                            .filter(entry -> entry.getValue() == request.getChatRoomId())
-                                            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-                                    sessionToUser.entrySet().stream()
-                                            .filter(entry -> subscribedSessions.containsKey(entry.getValue()))
-                                            .forEach(UtilException.rethrowConsumer(entry -> entry.getKey().sendMessage(newMessageJson)));
-
-                                    WebSocketResponse getChatRooms = WebSocketResponse.builder()
-                                            .responseType(WebSocketResponseType.ALL_CHAT_ROOMS)
-                                            .chatRooms(new HashSet<>(chatRoomRepository.findAll()))
-                                            .build();
-                                    TextMessage allChatRoomsJson = new TextMessage(gson.toJson(getChatRooms));
-                                    chatRoom.getParticipants().stream()
-                                            .filter(participant -> sessionToUser.values().contains(participant.getId()))
-                                            .forEach(UtilException.rethrowConsumer(participant -> sessionToUser.entrySet().stream()
-                                                    .filter(entry -> participant.getId().equals(entry.getValue()))
-                                                    .map(Map.Entry::getKey)
-                                                    .forEach(UtilException.rethrowConsumer(s -> s.sendMessage(allChatRoomsJson)))));
-                                    sendResponseToUser(String.valueOf(chatRoom.getCreator().getId()), getChatRooms);
-
-                                    if (KeywordChecker.keywordsPresent(dbMessage)) {
-                                        new Thread(() -> keywordSaver.save(dbMessage)).start();
-                                    }
+                                    TextMessage json = new TextMessage(gson.toJson(response));
+                                    session.sendMessage(json); 
                                     log.info(String.format("Added new message (id: %d) to chat room (id: %d)", dbMessage.getId(), request.getChatRoomId()));
                                 }));
                             }));
