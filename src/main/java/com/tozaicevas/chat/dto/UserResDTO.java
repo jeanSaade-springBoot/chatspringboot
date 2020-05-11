@@ -16,6 +16,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 public class UserResDTO {
 	@Expose
+	@SerializedName(value = "_id", alternate = "id")
     private Long id;
 	@Expose
     private String name;

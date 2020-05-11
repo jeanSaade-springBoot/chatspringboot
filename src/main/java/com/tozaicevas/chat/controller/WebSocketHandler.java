@@ -123,7 +123,10 @@ public class WebSocketHandler {
                                             .message(dbMessage)
                                             .build();
                                     TextMessage json = new TextMessage(gson.toJson(response));
-                                    session.sendMessage(json); 
+                                   // session.sendMessage(json); 
+                                    sessions.forEach(UtilException.rethrowConsumer(s -> {
+                                        s.sendMessage(json);
+                                     }));
                                     log.info(String.format("Added new message (id: %d) to chat room (id: %d)", dbMessage.getId(), request.getChatRoomId()));
                                 }));
                             }));
