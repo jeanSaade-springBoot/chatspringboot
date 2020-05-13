@@ -24,7 +24,10 @@ public class Message {
 
     @Expose
     private String text;
-
+    
+    @Expose
+    private String image;
+    
     @Expose
     private Date createdAt;
 

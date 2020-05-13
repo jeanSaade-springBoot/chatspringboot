@@ -49,7 +49,7 @@ public class WebSocketHandler {
         this.gson = gson;
         this.keywordSaver= keywordSaver;
     }
-
+ 
     public void handleRequest(WebSocketRequest request, WebSocketSession session, Set<WebSocketSession> sessions) throws IOException {
         String requestType = request.getRequestType();
         switch (requestType) {
@@ -67,6 +67,7 @@ public class WebSocketHandler {
                         .responseType(WebSocketResponseType.ALL_CHAT_ROOMS)
                         .chatRooms(new HashSet<>(chatRoomRepository.findAll()))
                         .build();
+                
                 String chatRooms = gson.toJson(response);
                 session.sendMessage(new TextMessage(chatRooms.replace("\"id","\"_id")));
                 log.info(String.format("Sent chat rooms to user (id: %s)", sessionToUser.get(session)));

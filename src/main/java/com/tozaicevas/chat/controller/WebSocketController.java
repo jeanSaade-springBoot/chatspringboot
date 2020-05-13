@@ -28,6 +28,7 @@ public class WebSocketController extends TextWebSocketHandler {
     @Override
     public void afterConnectionEstablished(WebSocketSession session) {
         log.info("New WebSocket connection: " + session.getRemoteAddress().toString());
+        session.setTextMessageSizeLimit(400000);
         sessions = Stream.concat(sessions.stream(), Stream.of(session))
                 .collect(Collectors.toSet());
     }
